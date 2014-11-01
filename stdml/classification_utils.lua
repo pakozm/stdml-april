@@ -14,15 +14,23 @@
   Place, Suite 330, Boston, MA 02111-1307 USA
 ]]
 
-local stdml = {
-  _NAME = "stdml",
-  _VERSION = "0.1",
-}
 
-stdml.linear_model = require "stdml.linear_model"
+local class_util = {}
 
-stdml.test = function()
-  stdml.linear_model.test()
+function class_util.check_target_classes(y)
+  local num_classes,class_dict = 0,{}
+  y:map(function(x)
+      assert(math.floor(x)==x, "Need integer numbers as class identifiers")
+      if not class_dict[x] then num_classes=num_classes+1 class_dict[x]=true end
+  end)
+  if num_classes == 2 then
+    assert(y:min() == 0 and y:max() == 1,
+           "For 2-class problems use 0/1 targets")
+  else
+    assert(y:min() == 1 and y:max() == num_classes,
+           "For multi-class problems use 1..N targets")
+  end
+  return num_classes,class_dict
 end
 
-return stdml
+return class_util

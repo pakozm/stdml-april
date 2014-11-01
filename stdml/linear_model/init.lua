@@ -21,4 +21,8 @@ local linear_model = {
 
 linear_model.logistic_regression = require "stdml.linear_model.logistic_regression"
 
+linear_model.test = function()
+  linear_model.logistic_regression.test()
+end
+
 return linear_model
