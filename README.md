@@ -1,4 +1,4 @@
-stdml-april
+STDML-APRIL
 ===========
 
 Extensions of [APRIL-ANN](https://github.com/pakozm/april-ann) with standard
