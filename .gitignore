@@ -1,28 +1,31 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+gmon.out
 
-# Precompiled Headers
-*.gch
-*.pch
+# Emacs backups #
+#################
+*~
+\#*\#
+.\#*
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# Vim swap #
+*.swp
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
 
-# Fortran module files
-*.mod
+# Emacs Clang autocompletion #
+##############################
+.clang-completion-error
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# Global tags #
+###############
+GPATH
+GRTAGS
+GSYMS
+GTAGS
