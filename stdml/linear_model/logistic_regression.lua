@@ -262,7 +262,7 @@ local function two_class_test()
   local val_N=1000
   local M=matrix
   local D=matrix.sparse.diag
-  local rnd = random(1234)
+  local rnd=random(1234)
   
   local function build_data(N)
     local x = matrix(N,2)
@@ -281,7 +281,7 @@ local function two_class_test()
   
   local x,y         = build_data(N)
   local val_x,val_y = build_data(val_N)
-  local model = log_reg{ verbose = false, l2 = 0.1, shuffle = random(1234) }
+  local model = log_reg{ verbose = false, l2 = 0.01, shuffle = random(1234) }
   local va_loss,tr_loss,n = model:fit(x,y,val_x,val_y)
   
   print(model.coef_)
