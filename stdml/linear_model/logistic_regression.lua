@@ -152,7 +152,11 @@ log_reg_methods.fit =
     if self.params.fit_intercept then
       model:push( ann.components.bias{ size=num_outputs, weights="intercept_" } )
     end
-    model:push( ann.components.actf.log_logistic() )
+    if num_outputs == 1 then
+      model:push( ann.components.actf.log_logistic() )
+    else
+      model:push( ann.components.actf.log_softmax() )
+    end
     --
     local loss = (num_classes==2) and ann.loss.cross_entropy() or ann.loss.multi_class_cross_entropy()
     local bsize = self.params.bunch_size or math.min(1024, num_samples)
