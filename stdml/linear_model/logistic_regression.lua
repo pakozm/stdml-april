@@ -70,9 +70,10 @@ log_reg.constructor =
       verbose = { "Boolean value, true for increase verbosity [optional]", },
       method = { "Which optimization method taken from ann.optimizer",
                  "(by default rprop) [optional]", },
-      options = { "Options to configure the optimizer given in method "},
+      options = { "Options to configure the optimizer given in method [optional]"},
       bunch_size = { "Bunch size (mini-batch size), by default it is the",
                      "min(num_samples, 1024) [optional]", },
+      replacement = { "Number of samples in one epoch iteration [optional]" },
     },
   } ..
   function(self,params)
@@ -89,6 +90,7 @@ log_reg.constructor =
         method = { type_match="string", default="adadelta" },
         options = { type_match="table" },
         bunch_size = { type_match="number" },
+        replacement = { type_match="number" },
       }, params)
     assert(ann.optimizer[self.params.method], "Needs a valid optimizer method")
   end
@@ -190,7 +192,7 @@ log_reg_methods.fit =
       input_dataset  = in_ds,
       output_dataset = out_ds,
       shuffle        = self.params.shuffle,
-      replacement    = bsize,
+      replacement    = self.params.replacement,
     }
     local va_data = {
       input_dataset  = val_in_ds,
@@ -198,7 +200,7 @@ log_reg_methods.fit =
     }
     local verbose = self.params.verbose
     local pocket = trainable.train_holdout_validation{
-      stopping_criterion = trainable.stopping_criteria.make_max_epochs_wo_imp_relative(1.5),
+      stopping_criterion = trainable.stopping_criteria.make_max_epochs_wo_imp_relative(1.2),
       min_epochs = self.params.min_epochs,
       max_epochs = self.params.max_epochs,
       tolerance  = self.params.tol,
