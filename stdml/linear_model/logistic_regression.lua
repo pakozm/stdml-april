@@ -40,7 +40,7 @@ end
 
 ----------------------------------------------------------------------------
 
-local log_reg,log_reg_methods = class("logistic_regression")
+local log_reg,log_reg_methods = class("stdml.linear_model.logistic_regression")
 
 april_set_doc(log_reg, { class = "class",
                          summary = "Logistic regression class" })
@@ -76,7 +76,7 @@ log_reg.constructor =
       replacement = { "Number of samples in one epoch iteration [optional]" },
     },
   } ..
-  function(self,params)
+  function(self,params,trainer)
     self.params = get_table_fields(
       { l1 = { type_match="number" },
         l2 = { type_match="number" },
@@ -93,6 +93,13 @@ log_reg.constructor =
         replacement = { type_match="number" },
       }, params)
     assert(ann.optimizer[self.params.method], "Needs a valid optimizer method")
+    if trainer then
+      local osize = trainer:get_output_size()
+      self.num_classes = (osize == 1) and 2 or osize
+      self.coef_ = trainer:weights("coef_")
+      self.intercept_ = trainer:weights("intercept_")
+      self.trainer = trainer
+    end
   end
 
 ----------------------------------------------------------------------------
@@ -256,6 +263,14 @@ function log_reg_methods:transform(x,threshold)
     sel_cols[{}] = sel_cols + gt_zero:select(1,i)
   end
   return x:index(2,sel_cols)
+end
+
+-----------------------------------------------------------------------------
+
+function log_reg_methods:to_lua_string(format)
+  return "require('stdml.linear_model').logistic_regression(%s,%s)" %
+    { util.to_lua_string(self.params, format),
+      util.to_lua_string(self.trainer, format) }
 end
 
 -----------------------------------------------------------------------------
