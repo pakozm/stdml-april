@@ -70,6 +70,7 @@ log_reg.constructor =
       verbose = { "Boolean value, true for increase verbosity [optional]", },
       method = { "Which optimization method taken from ann.optimizer",
                  "(by default rprop) [optional]", },
+      options = { "Options to configure the optimizer given in method "},
       bunch_size = { "Bunch size (mini-batch size), by default it is the",
                      "min(num_samples, 1024) [optional]", },
     },
@@ -85,7 +86,8 @@ log_reg.constructor =
         max_epochs = { type_match="number", default=1000 },
         min_epochs = { type_match="number", default=10 },
         verbose = { type_match="boolean" },
-        method = { type_match="string", default="rprop" },
+        method = { type_match="string", default="adadelta" },
+        options = { type_match="table" },
         bunch_size = { type_match="number" },
       }, params)
     assert(ann.optimizer[self.params.method], "Needs a valid optimizer method")
@@ -163,14 +165,8 @@ log_reg_methods.fit =
     local trainer = trainable.supervised_trainer(model, loss, bsize,
                                                  ann.optimizer[self.params.method]())
     trainer:build()
-    if trainer:has_option("learning_rate") then
-      trainer:set_option("learning_rate", 0.02)
-    end
-    if trainer:has_option("momentum") then
-      trainer:set_option("momentum", 0.04)
-    end
-    if trainer:has_option("decay") then
-      trainer:set_option("decay", 1e-05)
+    for k,v in pairs(self.params.options) do
+      trainer:set_option(k,v)
     end
     local coef_,intercept_ = trainer:weights("coef_"),trainer:weights("intercept_")
     self.coef_,self.intercept_= coef_,intercept_
@@ -202,7 +198,7 @@ log_reg_methods.fit =
     }
     local verbose = self.params.verbose
     local pocket = trainable.train_holdout_validation{
-      stopping_criterion = trainable.stopping_criteria.make_max_epochs_wo_imp_relative(1.2),
+      stopping_criterion = trainable.stopping_criteria.make_max_epochs_wo_imp_relative(1.5),
       min_epochs = self.params.min_epochs,
       max_epochs = self.params.max_epochs,
       tolerance  = self.params.tol,
