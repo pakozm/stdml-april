@@ -25,9 +25,9 @@ local mop = matrix.op
 local function validate_ds(self,va_data,l1,l2)
   local trainer = self.trainer
   local va_loss = trainer:validate_dataset(va_data)
-  local coef = trainer:weights("coef_")
-  if l1 then va_loss = va_loss + l1*mop.abs(coef):sum() end
-  if l2 then va_loss = va_loss + 0.5*l2*coef:dot(coef) end
+  -- local coef = trainer:weights("coef_")
+  -- if l1 then va_loss = va_loss + l1*mop.abs(coef):sum() end
+  -- if l2 then va_loss = va_loss + 0.5*l2*coef:dot(coef) end
   return va_loss
 end
 
