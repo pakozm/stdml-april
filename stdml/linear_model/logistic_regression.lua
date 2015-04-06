@@ -88,7 +88,7 @@ log_reg.constructor =
         min_epochs = { type_match="number", default=10 },
         verbose = { type_match="boolean" },
         method = { type_match="string", default="adadelta" },
-        options = { type_match="table" },
+        options = { type_match="table", default={} },
         bunch_size = { type_match="number" },
         replacement = { type_match="number" },
       }, params)
