@@ -18,19 +18,20 @@
 local class_util = {}
 
 function class_util.check_target_classes(y)
-  local num_classes,class_dict = 0,{}
-  y:map(function(x)
-      assert(math.floor(x)==x, "Need integer numbers as class identifiers")
-      if not class_dict[x] then num_classes=num_classes+1 class_dict[x]=true end
-  end)
-  if num_classes == 2 then
-    assert(y:min() == 0 and y:max() == 1,
-           "For 2-class problems use 0/1 targets")
+  local num_classes = 0
+  if y:dim(2) == 1 then
+    num_classes = y:max()
+    if num_classes == 1 then
+      assert(y:min() == 0 and y:max() == 1,
+             "For 2-class problems use 0/1 targets")
+    else
+      assert(y:min() == 1 and y:max() == num_classes,
+             "For multi-class problems use 1..N targets")
+    end
   else
-    assert(y:min() == 1 and y:max() == num_classes,
-           "For multi-class problems use 1..N targets")
+    num_classes = y:dim(2)
   end
-  return num_classes,class_dict
+  return num_classes
 end
 
 return class_util

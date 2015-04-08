@@ -59,6 +59,7 @@ log_reg.constructor =
       "self.coef_ and self.intercept_",
     },
     params = {
+      num_classes = { "Number of classes [optional]" },
       l1 = { "L1 regularization parameter (by default 0.0) [optional]" },
       l2 = { "L2 regularization parameter (by default 0.0) [optional]" },
       fit_intercept = { "Boolean indicating if fit or not the intercept",
@@ -80,6 +81,7 @@ log_reg.constructor =
     self.params = get_table_fields(
       { l1 = { type_match="number" },
         l2 = { type_match="number" },
+        num_classes = { type_match="number" },
         fit_intercept = { type_match="boolean", default=true },
         -- class_weight = { },
         shuffle = { isa_match=random, default=random() },
@@ -153,7 +155,7 @@ log_reg_methods.fit =
            "Needs same input/output number of samples")
     local x_dim,y_dim = x:dim(),y:dim()
     local num_samples,num_features = x:dim(1),x:dim(2)
-    local num_classes,class_dict = check_target_classes(y)
+    local num_classes = self.params.num_classes or check_target_classes(y)
     self.num_classes = num_classes
     -- MODEL
     local num_outputs = (num_classes==2) and 1 or num_classes
@@ -191,8 +193,10 @@ log_reg_methods.fit =
     local out_ds  = dataset.matrix(y)
     local val_in_ds   = dataset.matrix(val_x)
     local val_out_ds  = dataset.matrix(val_y)
-    if num_classes > 2 then
+    if num_classes > 2 and y:dim(2) == 1 then
       out_ds = dataset.indexed(out_ds, { dataset.identity(num_classes) })
+    end
+    if num_classes > 2 and val_y:dim(2) == 1 then
       val_out_ds = dataset.indexed(val_out_ds, { dataset.identity(num_classes) })
     end
     local tr_data = {
